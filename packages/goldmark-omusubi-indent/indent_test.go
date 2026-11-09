@@ -197,3 +197,21 @@ func assertSameAST(t *testing.T, source []byte, got, want ast.Node) {
 		gc, wc = gc.NextSibling(), wc.NextSibling()
 	}
 }
+
+// The marker-only/setext boundary follows the agreed CommonMark blank-line alias.
+func TestMarkerOnlySetextMatchesBlankLine(t *testing.T) {
+	extended := parser.New(parser.WithExtensions(indent.Parser))
+	native := parser.New()
+	for _, c := range []struct{ marked, plain string }{
+		{"one\n　\n---", "one\n\n---"},
+		{"one\n　\n===", "one\n\n==="},
+		{"> one\n> 　\n> ---", "> one\n>\n> ---"},
+		{"> one\n> 　\n> ===", "> one\n>\n> ==="},
+	} {
+		t.Run(c.marked, func(t *testing.T) {
+			if got, want := render(t, extended, c.marked), render(t, native, c.plain); got != want {
+				t.Fatalf("got %q, want blank-line alias %q", got, want)
+			}
+		})
+	}
+}
