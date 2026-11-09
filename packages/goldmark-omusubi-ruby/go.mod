@@ -1,4 +1,4 @@
-module github.com/omusubimd/packages-goldmark/goldmark-omusubi-ruby
+module github.com/omusubimd/packages-goldmark/packages/goldmark-omusubi-ruby
 
 go 1.25
 

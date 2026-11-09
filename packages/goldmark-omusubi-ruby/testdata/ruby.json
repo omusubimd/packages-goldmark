@@ -1,0 +1,83 @@
+[
+  {
+    "input": "[青空]<<あおぞら>>",
+    "output": "<p><ruby>青空<rt>あおぞら</rt></ruby></p>\n"
+  },
+  {
+    "input": "[青|空]<<あお|ぞら>>",
+    "output": "<p><ruby>青<rt>あお</rt>空<rt>ぞら</rt></ruby></p>\n"
+  },
+  {
+    "input": "[青天|の|霹靂]<<せいてん||へきれき>>",
+    "output": "<p><ruby>青天<rt>せいてん</rt></ruby>の<ruby>霹靂<rt>へきれき</rt></ruby></p>\n"
+  },
+  {
+    "input": "[の|霹靂]<<|へきれき>>",
+    "output": "<p>の<ruby>霹靂<rt>へきれき</rt></ruby></p>\n"
+  },
+  {
+    "input": "[青天|の]<<せいてん|>>",
+    "output": "<p><ruby>青天<rt>せいてん</rt></ruby>の</p>\n"
+  },
+  {
+    "input": "[青|い|空|だ]<<あお|||>>",
+    "output": "<p><ruby>青<rt>あお</rt></ruby>い空だ</p>\n"
+  },
+  {
+    "input": "[青天|の|霹靂]<<||>>",
+    "output": "<p>青天の霹靂</p>\n"
+  },
+  {
+    "input": "[青空]<<>>",
+    "output": "<p>青空</p>\n"
+  },
+  {
+    "input": "[**青**|*空*]<<あお|ぞら>>",
+    "output": "<p><ruby><strong>青</strong><rt>あお</rt><em>空</em><rt>ぞら</rt></ruby></p>\n"
+  },
+  {
+    "input": "[`青空`]<<**あおぞら**>>",
+    "output": "<p><ruby><code>青空</code><rt>**あおぞら**</rt></ruby></p>\n"
+  },
+  {
+    "input": "[\\*青空\\*]<<あおぞら>>",
+    "output": "<p><ruby>*青空*<rt>あおぞら</rt></ruby></p>\n"
+  },
+  {
+    "input": "[A&amp;B]<<a&amp;b>>",
+    "output": "<p><ruby>A&amp;B<rt>a&amp;b</rt></ruby></p>\n"
+  },
+  {
+    "input": "[<img src=x onerror=alert(1)>]<<&lt;script&gt;>>",
+    "output": "<p><ruby>&lt;img src=x onerror=alert(1)&gt;<rt>&lt;script&gt;</rt></ruby></p>\n",
+    "goldmarkOutput": "<p><ruby><!-- raw HTML omitted --><rt>&lt;script&gt;</rt></ruby></p>\n"
+  },
+  {
+    "input": "今日は[青]<<あお>>[空]<<そら>>です。",
+    "output": "<p>今日は<ruby>青<rt>あお</rt></ruby><ruby>空<rt>そら</rt></ruby>です。</p>\n"
+  },
+  {
+    "input": "[青]<<あお>>\n\n[空]<<そら>>",
+    "output": "<p><ruby>青<rt>あお</rt></ruby></p>\n<p><ruby>空<rt>そら</rt></ruby></p>\n"
+  },
+  {
+    "input": "[青空]<< あおぞら >>",
+    "output": "<p><ruby>青空<rt> あおぞら </rt></ruby></p>\n"
+  },
+  {
+    "input": "[青空]<<あおぞら>",
+    "output": "<p>[青空]&lt;&lt;あおぞら&gt;</p>\n"
+  },
+  {
+    "input": "[青|空]<<あおぞら>>",
+    "output": "<p>[青|空]&lt;&lt;あおぞら&gt;&gt;</p>\n"
+  },
+  {
+    "input": "[青空]<<あお|ぞら>>",
+    "output": "<p>[青空]&lt;&lt;あお|ぞら&gt;&gt;</p>\n"
+  },
+  {
+    "input": "[**青**|空]<<あおぞら>>[空]<<そら>>",
+    "output": "<p>[<strong>青</strong>|空]&lt;&lt;あおぞら&gt;&gt;<ruby>空<rt>そら</rt></ruby></p>\n"
+  }
+]

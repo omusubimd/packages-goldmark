@@ -3,7 +3,7 @@ package internal_test
 import (
 	"testing"
 
-	"github.com/omusubimd/packages-goldmark/goldmark-omusubi-ruby/internal"
+	"github.com/omusubimd/packages-goldmark/packages/goldmark-omusubi-ruby/internal"
 	"github.com/stretchr/testify/assert"
 	"github.com/yuin/goldmark/v2/text"
 )
