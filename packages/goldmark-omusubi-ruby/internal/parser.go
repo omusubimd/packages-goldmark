@@ -8,7 +8,9 @@ import (
 	"github.com/yuin/goldmark/v2/text"
 )
 
-type RubyParser struct{}
+type RubyParser struct {
+	labels parser.Parser
+}
 
 func (p *RubyParser) Trigger() []byte {
 	return []byte{'['}
@@ -30,47 +32,35 @@ func (p *RubyParser) Parse(parent ast.Node, block text.Reader, pc parser.Context
 	}
 
 	rubyStart := labelEnd + 3
-	rubyLength := bytes.Index(line[rubyStart:], []byte(">>"))
-	if rubyLength < 0 {
+	rubyLength := bytes.IndexByte(line[rubyStart:], '>')
+	if rubyLength < 0 || rubyStart+rubyLength+1 >= len(line) || line[rubyStart+rubyLength+1] != '>' {
 		return nil
 	}
 	rubyEnd := rubyStart + rubyLength
 
-	labelStart := 1
-	rubyPartStart := rubyStart
-	ruby := NewRubyNode()
-	for {
-		labelPartEnd := labelEnd
-		if i := bytes.IndexByte(line[labelStart:labelEnd], '|'); i >= 0 {
-			labelPartEnd = labelStart + i
-		}
-		if labelPartEnd == labelStart {
+	labels := bytes.Split(line[1:labelEnd], []byte{'|'})
+	readings := bytes.Split(line[rubyStart:rubyEnd], []byte{'|'})
+	if len(labels) != len(readings) {
+		return nil
+	}
+	for _, label := range labels {
+		if len(label) == 0 {
 			return nil
 		}
+	}
 
-		rubyPartEnd := rubyEnd
-		if i := bytes.IndexByte(line[rubyPartStart:rubyEnd], '|'); i >= 0 {
-			rubyPartEnd = rubyPartStart + i
-		}
-
-		baseSegment := text.NewSegment(segment.Start+labelStart, segment.Start+labelPartEnd)
+	labelStart, readingStart := 1, rubyStart
+	ruby := NewRubyNode()
+	for i, label := range labels {
+		reading := readings[i]
 		rubySegment := NewRubySegmentNode(text.NewSingleLineValueFromSegment(
-			text.NewSegment(segment.Start+rubyPartStart, segment.Start+rubyPartEnd),
+			text.NewSegment(segment.Start+readingStart, segment.Start+readingStart+len(reading)),
 			block.Decoder(),
 		))
-		rubySegment.AppendChild(ast.NewText(text.NewSingleLineValueFromSegment(baseSegment, block.Decoder())))
+		appendLabel(rubySegment, p.labels, label, segment.Start+labelStart, pc)
 		ruby.AppendChild(rubySegment)
-
-		labelsDone := labelPartEnd == labelEnd
-		rubyPartsDone := rubyPartEnd == rubyEnd
-		if labelsDone || rubyPartsDone {
-			if labelsDone != rubyPartsDone {
-				return nil
-			}
-			break
-		}
-		labelStart = labelPartEnd + 1
-		rubyPartStart = rubyPartEnd + 1
+		labelStart += len(label) + 1
+		readingStart += len(reading) + 1
 	}
 
 	block.Advance(rubyEnd + 2)
@@ -78,5 +68,5 @@ func (p *RubyParser) Parse(parent ast.Node, block text.Reader, pc parser.Context
 }
 
 func NewRubyParser() *RubyParser {
-	return &RubyParser{}
+	return &RubyParser{labels: newLabelParser()}
 }

@@ -37,7 +37,7 @@ func TestRubyParser(t *testing.T) {
 				source: "[青空]<<あおぞら>>",
 				expected: ast.N(
 					NewRubyNode(),
-					
+
 					ast.N(
 						NewRubySegmentNode(text.NewSingleLineValue([]byte("あおぞら"), text.IdentityDecoder)),
 						"青空",
@@ -93,12 +93,16 @@ func TestRubyParser(t *testing.T) {
 		for _, c := range cases {
 			t.Run(c.name, func(t *testing.T) {
 				source := []byte(c.source)
-				parser := parser.New(parser.WithInlineParsers(util.Prioritized[parser.InlineParser](p, 199)))
+				parser := parser.New(parser.WithInlineParsers(util.Prioritized[parser.InlineParser](p, 199)), parser.WithASTTransformers(util.Prioritized[parser.ASTTransformer](&RubyTransformer{}, 100)))
 				doc := parser.Parse(source)
 
-				actualRuby := doc.FirstChild().FirstChild()
+				actualRuby := doc.FirstChild()
+				expected := c.expected
+				if expected.Kind() != ast.KindParagraph {
+					expected = ast.N(ast.NewParagraph(), expected)
+				}
 
-				assertNodeEqual(t, source, c.expected, actualRuby)
+				assertNodeEqual(t, source, expected, actualRuby)
 			})
 		}
 	})
@@ -112,7 +116,8 @@ func assertNodeEqual(
 ) {
 	t.Helper()
 
-	assert.Equal(t, expected.Kind(), actual.Kind())
+	require.NotNil(t, actual)
+	require.Equal(t, expected.Kind(), actual.Kind())
 
 	switch expected := expected.(type) {
 	case *ast.Text:
