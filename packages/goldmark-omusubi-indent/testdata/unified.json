@@ -1,0 +1,360 @@
+[
+  {
+    "input": "こんにちは\n　おむすび",
+    "unifiedOutput": "<p>こんにちは</p>\n<p>おむすび</p>"
+  },
+  {
+    "input": "こんにちは\n　しゃけ\n　おむすび",
+    "unifiedOutput": "<p>こんにちは</p>\n<p>しゃけ</p>\n<p>おむすび</p>"
+  },
+  {
+    "input": "こんにちは\n　いくら\n\nおむすび",
+    "unifiedOutput": "<p>こんにちは</p>\n<p>いくら</p>\n<p>おむすび</p>"
+  },
+  {
+    "input": "こんにちは　昆布おむすび",
+    "unifiedOutput": "<p>こんにちは　昆布おむすび</p>"
+  },
+  {
+    "input": "　**おむすび**\n大作戦",
+    "unifiedOutput": "<p><strong>おむすび</strong>\n大作戦</p>"
+  },
+  {
+    "input": "　[link](https://example.com)",
+    "unifiedOutput": "<p><a href=\"https://example.com\">link</a></p>"
+  },
+  {
+    "input": "　　two",
+    "unifiedOutput": "<p>　two</p>"
+  },
+  {
+    "input": "　   two",
+    "unifiedOutput": "<p>   two</p>"
+  },
+  {
+    "input": "　\ttwo",
+    "unifiedOutput": "<p>\ttwo</p>"
+  },
+  {
+    "input": "first\nnext",
+    "unifiedOutput": "<p>first\nnext</p>"
+  },
+  {
+    "input": "　first\nnext",
+    "unifiedOutput": "<p>first\nnext</p>"
+  },
+  {
+    "input": "　",
+    "unifiedOutput": ""
+  },
+  {
+    "input": "　\n",
+    "unifiedOutput": "\n"
+  },
+  {
+    "input": "one\n　\ntwo",
+    "unifiedOutput": "<p>one</p>\n\n<p>two</p>",
+    "goldmarkOutput": "<p>one</p>\n<p>two</p>\n",
+    "difference": "blank-line-layout"
+  },
+  {
+    "input": "one\n　\n　two",
+    "unifiedOutput": "<p>one</p>\n\n<p>two</p>",
+    "goldmarkOutput": "<p>one</p>\n<p>two</p>\n",
+    "difference": "blank-line-layout"
+  },
+  {
+    "input": "one\n　\n　\nthree",
+    "unifiedOutput": "<p>one</p>\n\n\n<p>three</p>",
+    "goldmarkOutput": "<p>one</p>\n<p>three</p>\n",
+    "difference": "blank-line-layout"
+  },
+  {
+    "input": "　# heading",
+    "unifiedOutput": "<p># heading</p>"
+  },
+  {
+    "input": "　- item",
+    "unifiedOutput": "<p>- item</p>"
+  },
+  {
+    "input": "　> quote",
+    "unifiedOutput": "<p>&gt; quote</p>"
+  },
+  {
+    "input": "　```js\nx\n```",
+    "unifiedOutput": "<p>```js\nx</p>\n<pre><code></code></pre>\n"
+  },
+  {
+    "input": "　<div>hi</div>",
+    "unifiedOutput": "<p>&lt;div&gt;hi&lt;/div&gt;</p>",
+    "goldmarkOutput": "<p><!-- raw HTML omitted -->hi<!-- raw HTML omitted --></p>\n",
+    "difference": "html-policy"
+  },
+  {
+    "input": "　a\n---",
+    "unifiedOutput": "<h2>a</h2>"
+  },
+  {
+    "input": "　a\n===",
+    "unifiedOutput": "<h1>a</h1>"
+  },
+  {
+    "input": "one\n　two\n---",
+    "unifiedOutput": "<p>one</p>\n<h2>two</h2>"
+  },
+  {
+    "input": "one\n　\n---",
+    "unifiedOutput": "<h2>one</h2>",
+    "goldmarkOutput": "<p>one</p>\n<hr />\n",
+    "difference": "marker-only-setext"
+  },
+  {
+    "input": "one\n　\n===",
+    "unifiedOutput": "<h1>one</h1>",
+    "goldmarkOutput": "<p>one</p>\n<p>===</p>\n",
+    "difference": "marker-only-setext"
+  },
+  {
+    "input": "　\n---",
+    "unifiedOutput": "\n<hr />"
+  },
+  {
+    "input": "　\n===",
+    "unifiedOutput": "\n<p>===</p>"
+  },
+  {
+    "input": "# head\n　body",
+    "unifiedOutput": "<h1>head</h1>\n<p>body</p>"
+  },
+  {
+    "input": "---\n　body",
+    "unifiedOutput": "<hr />\n<p>body</p>"
+  },
+  {
+    "input": "[ref]: /url\n　[ref]",
+    "unifiedOutput": "<p><a href=\"/url\">ref</a></p>"
+  },
+  {
+    "input": "　[ref]: /url\n[ref]",
+    "unifiedOutput": "<p><a href=\"/url\">ref</a></p>"
+  },
+  {
+    "input": "　 [ref]: /url\n[ref]",
+    "unifiedOutput": "<p> [ref]: /url\n[ref]</p>",
+    "goldmarkOutput": "<p><a href=\"/url\">ref</a></p>\n",
+    "difference": "reference-definition"
+  },
+  {
+    "input": "`a　b`",
+    "unifiedOutput": "<p><code>a　b</code></p>"
+  },
+  {
+    "input": "　`　code`",
+    "unifiedOutput": "<p><code>　code</code></p>"
+  },
+  {
+    "input": "```md\n　code\n```",
+    "unifiedOutput": "<pre><code class=\"language-md\">　code\n</code></pre>"
+  },
+  {
+    "input": "   　code",
+    "unifiedOutput": "<p>code</p>"
+  },
+  {
+    "input": "\t　code",
+    "unifiedOutput": "<pre><code>　code\n</code></pre>"
+  },
+  {
+    "input": "one\n   　two",
+    "unifiedOutput": "<p>one</p>\n<p>two</p>"
+  },
+  {
+    "input": "one\n\t　two",
+    "unifiedOutput": "<p>one\n　two</p>"
+  },
+  {
+    "input": "one\n  　two",
+    "unifiedOutput": "<p>one</p>\n<p>two</p>"
+  },
+  {
+    "input": "<div>\n　inside\n</div>\n\n　outside",
+    "unifiedOutput": "&lt;div&gt;\n　inside\n&lt;/div&gt;\n<p>outside</p>",
+    "goldmarkOutput": "<!-- raw HTML omitted -->\n<p>outside</p>\n",
+    "difference": "html-policy"
+  },
+  {
+    "input": "<script>\n　inside\n</script>\n　outside",
+    "unifiedOutput": "&lt;script&gt;\n　inside\n&lt;/script&gt;\n<p>outside</p>",
+    "goldmarkOutput": "<!-- raw HTML omitted -->\n<p>outside</p>\n",
+    "difference": "html-policy"
+  },
+  {
+    "input": "a\n\n<div>\n　inside\n</div>",
+    "unifiedOutput": "<p>a</p>\n&lt;div&gt;\n　inside\n&lt;/div&gt;",
+    "goldmarkOutput": "<p>a</p>\n<!-- raw HTML omitted -->\n",
+    "difference": "html-policy"
+  },
+  {
+    "input": "> one\n> 　two",
+    "unifiedOutput": "<blockquote>\n<p>one</p>\n<p>two</p>\n</blockquote>"
+  },
+  {
+    "input": "> 　one\n> next",
+    "unifiedOutput": "<blockquote>\n<p>one\nnext</p>\n</blockquote>"
+  },
+  {
+    "input": "> one\n　outside",
+    "unifiedOutput": "<blockquote>\n<p>one</p>\n</blockquote>\n<p>outside</p>"
+  },
+  {
+    "input": "> > 　nested",
+    "unifiedOutput": "<blockquote>\n<blockquote>\n<p>nested</p>\n</blockquote>\n</blockquote>"
+  },
+  {
+    "input": "> 　\n> next",
+    "unifiedOutput": "<blockquote>\n<p>next</p>\n</blockquote>"
+  },
+  {
+    "input": "> one\n> 　\n> ---",
+    "unifiedOutput": "<blockquote>\n<h2>one</h2>\n</blockquote>",
+    "goldmarkOutput": "<blockquote>\n<p>one</p>\n<hr />\n</blockquote>\n",
+    "difference": "marker-only-setext"
+  },
+  {
+    "input": "- one\n  　two\n- three",
+    "unifiedOutput": "<ul>\n<li>onetwo</li>\n<li>three</li>\n</ul>",
+    "goldmarkOutput": "<ul>\n<li>one\ntwo</li>\n<li>three</li>\n</ul>\n",
+    "difference": "tight-list-layout"
+  },
+  {
+    "input": "- 　one\n  　two",
+    "unifiedOutput": "<ul>\n<li>onetwo</li>\n</ul>",
+    "goldmarkOutput": "<ul>\n<li>one\ntwo</li>\n</ul>\n",
+    "difference": "tight-list-layout"
+  },
+  {
+    "input": "- one\n　outside",
+    "unifiedOutput": "<ul>\n<li>one</li>\n</ul>\n<p>outside</p>"
+  },
+  {
+    "input": "- one\n\n  　two",
+    "unifiedOutput": "<ul>\n<li>\n<p>one</p>\n<p>two</p>\n</li>\n</ul>"
+  },
+  {
+    "input": "- one\n  　\n  two",
+    "unifiedOutput": "<ul>\n<li>onetwo</li>\n</ul>",
+    "goldmarkOutput": "<ul>\n<li>one\ntwo</li>\n</ul>\n",
+    "difference": "tight-list-layout"
+  },
+  {
+    "input": "- one\n  　\n- two",
+    "unifiedOutput": "<ul>\n<li>one</li>\n<li>two</li>\n</ul>"
+  },
+  {
+    "input": "- 　\n- two",
+    "unifiedOutput": "<ul>\n<li>\n</li>\n<li>two</li>\n</ul>",
+    "goldmarkOutput": "<ul>\n<li></li>\n<li>two</li>\n</ul>\n",
+    "difference": "tight-list-layout"
+  },
+  {
+    "input": "1. 　one\n2. 　two",
+    "unifiedOutput": "<ol>\n<li>one</li>\n<li>two</li>\n</ol>"
+  },
+  {
+    "input": "- one\n  - 　nested",
+    "unifiedOutput": "<ul>\n<li>one\n<ul>\n<li>nested</li>\n</ul>\n</li>\n</ul>"
+  },
+  {
+    "input": "a\r\n　b\r\nnext",
+    "unifiedOutput": "<p>a</p>\r\n<p>b\r\nnext</p>",
+    "goldmarkOutput": "<p>a</p>\n<p>b\nnext</p>\n",
+    "difference": "native-line-endings"
+  },
+  {
+    "input": "a\r　b\rnext",
+    "unifiedOutput": "<p>a</p>\r<p>b\rnext</p>",
+    "goldmarkOutput": "<p>a\r　b\rnext</p>\n",
+    "difference": "native-line-endings"
+  },
+  {
+    "input": "a\n　b\n\n    code",
+    "unifiedOutput": "<p>a</p>\n<p>b</p>\n<pre><code>code\n</code></pre>"
+  },
+  {
+    "input": "a\n　b\n\n~~~\n　code\n~~~",
+    "unifiedOutput": "<p>a</p>\n<p>b</p>\n<pre><code>　code\n</code></pre>"
+  },
+  {
+    "input": "あいう\nあいう",
+    "unifiedOutput": "<p>あいう\nあいう</p>"
+  },
+  {
+    "input": "、not-a-marker",
+    "unifiedOutput": "<p>、not-a-marker</p>"
+  },
+  {
+    "input": "a\n、not-a-marker",
+    "unifiedOutput": "<p>a\n、not-a-marker</p>"
+  },
+  {
+    "input": "a\n　b  \nnext",
+    "unifiedOutput": "<p>a</p>\n<p>b<br />\nnext</p>"
+  },
+  {
+    "input": "　body",
+    "unifiedOutput": "<p>body</p>"
+  },
+  {
+    "input": "first\n　body",
+    "unifiedOutput": "<p>first</p>\n<p>body</p>"
+  },
+  {
+    "input": " 　body",
+    "unifiedOutput": "<p>body</p>"
+  },
+  {
+    "input": "first\n 　body",
+    "unifiedOutput": "<p>first</p>\n<p>body</p>"
+  },
+  {
+    "input": "  　body",
+    "unifiedOutput": "<p>body</p>"
+  },
+  {
+    "input": "first\n  　body",
+    "unifiedOutput": "<p>first</p>\n<p>body</p>"
+  },
+  {
+    "input": "   　body",
+    "unifiedOutput": "<p>body</p>"
+  },
+  {
+    "input": "first\n   　body",
+    "unifiedOutput": "<p>first</p>\n<p>body</p>"
+  },
+  {
+    "input": "    　body",
+    "unifiedOutput": "<pre><code>　body\n</code></pre>"
+  },
+  {
+    "input": "first\n    　body",
+    "unifiedOutput": "<p>first\n　body</p>"
+  },
+  {
+    "input": "     　body",
+    "unifiedOutput": "<pre><code> 　body\n</code></pre>"
+  },
+  {
+    "input": "first\n     　body",
+    "unifiedOutput": "<p>first\n　body</p>"
+  },
+  {
+    "input": "      　body",
+    "unifiedOutput": "<pre><code>  　body\n</code></pre>"
+  },
+  {
+    "input": "first\n      　body",
+    "unifiedOutput": "<p>first\n　body</p>"
+  }
+]
