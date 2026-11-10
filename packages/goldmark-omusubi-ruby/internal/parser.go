@@ -57,7 +57,7 @@ func (p *RubyParser) Parse(parent ast.Node, block text.Reader, pc parser.Context
 			text.NewSegment(segment.Start+readingStart, segment.Start+readingStart+len(reading)),
 			block.Decoder(),
 		))
-		appendLabel(rubySegment, p.labels, label, segment.Start+labelStart, pc)
+		appendLabel(rubySegment, p.labels, label, segment.Start+labelStart, pc, block.Decoder())
 		ruby.AppendChild(rubySegment)
 		labelStart += len(label) + 1
 		readingStart += len(reading) + 1
@@ -68,5 +68,10 @@ func (p *RubyParser) Parse(parent ast.Node, block text.Reader, pc parser.Context
 }
 
 func NewRubyParser() *RubyParser {
-	return &RubyParser{labels: newLabelParser()}
+	return NewRubyParserWithConfig(&parser.Config{})
+}
+
+// NewRubyParserWithConfig applies the host's supported inline settings to labels.
+func NewRubyParserWithConfig(config *parser.Config) *RubyParser {
+	return &RubyParser{labels: newLabelParser(config)}
 }

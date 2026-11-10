@@ -11,8 +11,16 @@ import (
 
 // Labels are inline fragments: heading, list and HTML block syntax must not
 // change their interpretation. Each segment gets its own delimiter context.
-func newLabelParser() parser.Parser {
-	return parser.New(
+func newLabelParser(config *parser.Config) parser.Parser {
+	var emphasisOptions []parser.EmphasisOption
+	if config.ParseDelimiterFunc != nil {
+		emphasisOptions = append(emphasisOptions, parser.WithParseDelimiterFunc(config.ParseDelimiterFunc))
+	}
+	var options []parser.Option
+	if config.EscapedSpace {
+		options = append(options, parser.WithEscapedSpace())
+	}
+	options = append(options,
 		parser.WithDefaultParsers(false),
 		parser.WithBlockParsers(util.Prioritized[parser.BlockParser](&labelParagraphParser{}, 100)),
 		parser.WithInlineParsers(
@@ -20,9 +28,10 @@ func newLabelParser() parser.Parser {
 			util.Prioritized(parser.NewLinkParser(), 200),
 			util.Prioritized(parser.NewAutoLinkParser(), 300),
 			util.Prioritized(parser.NewRawHTMLParser(), 400),
-			util.Prioritized(parser.NewEmphasisParser(), 500),
+			util.Prioritized(parser.NewEmphasisParser(emphasisOptions...), 500),
 		),
 	)
+	return parser.New(options...)
 }
 
 type labelParagraphParser struct{}
@@ -42,7 +51,7 @@ func (*labelParagraphParser) Close(ast.Node, text.Reader, parser.Context) {}
 func (*labelParagraphParser) CanInterruptParagraph() bool                 { return false }
 func (*labelParagraphParser) CanAcceptIndentedLine() bool                 { return true }
 
-func appendLabel(parent ast.Node, p parser.Parser, source []byte, offset int, outer parser.Context) {
+func appendLabel(parent ast.Node, p parser.Parser, source []byte, offset int, outer parser.Context, decoder text.Decoder) {
 	pc := parser.NewContext()
 	for _, definition := range outer.LinkDefinitions() {
 		pc.AddLinkDefinition(definition)
@@ -50,8 +59,20 @@ func appendLabel(parent ast.Node, p parser.Parser, source []byte, offset int, ou
 	doc := p.Parse(source, parser.WithContext(pc))
 	paragraph := doc.FirstChild()
 	if paragraph == nil {
-		parent.AppendChild(ast.NewText(text.NewSingleLineValue(source, text.IdentityDecoder)))
+		parent.AppendChild(ast.NewText(text.NewSingleLineValue(source, decoder)))
 		return
+	}
+	// Goldmark trims paragraph-final whitespace. Restore the raw suffix before
+	// decoding: an escaped final space must be handled together with its slash,
+	// while a literal escaped backslash followed by a space must stay literal.
+	trimmed := bytes.TrimRight(source, " \t")
+	if len(trimmed) < len(source) {
+		suffix := source[len(trimmed):]
+		if last, ok := paragraph.LastChild().(*ast.Text); ok {
+			last.Value = text.NewSingleLineValue(last.Value.Str(source)+string(suffix), decoder)
+		} else {
+			paragraph.AppendChild(ast.NewText(text.NewSingleLineValue(suffix, decoder)))
+		}
 	}
 	// Fragment-backed values cannot refer to the document's byte slice. Own the
 	// decoded values before moving nodes, so every renderer/AST consumer can use
@@ -93,10 +114,5 @@ func appendLabel(parent ast.Node, p parser.Parser, source []byte, offset int, ou
 		child := paragraph.FirstChild()
 		paragraph.RemoveChild(child)
 		parent.AppendChild(child)
-	}
-	// Goldmark trims paragraph-final whitespace; ruby labels preserve it.
-	trimmed := bytes.TrimRight(source, " \t")
-	if len(trimmed) < len(source) {
-		parent.AppendChild(ast.NewText(text.NewSingleLineValue(source[len(trimmed):], text.IdentityDecoder)))
 	}
 }
