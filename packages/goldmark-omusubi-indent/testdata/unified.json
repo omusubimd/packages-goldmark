@@ -49,25 +49,19 @@
   },
   {
     "input": "　\n",
-    "unifiedOutput": "\n"
+    "unifiedOutput": ""
   },
   {
     "input": "one\n　\ntwo",
-    "unifiedOutput": "<p>one</p>\n\n<p>two</p>",
-    "goldmarkOutput": "<p>one</p>\n<p>two</p>\n",
-    "difference": "blank-line-layout"
+    "unifiedOutput": "<p>one</p>\n<p>two</p>"
   },
   {
     "input": "one\n　\n　two",
-    "unifiedOutput": "<p>one</p>\n\n<p>two</p>",
-    "goldmarkOutput": "<p>one</p>\n<p>two</p>\n",
-    "difference": "blank-line-layout"
+    "unifiedOutput": "<p>one</p>\n<p>two</p>"
   },
   {
     "input": "one\n　\n　\nthree",
-    "unifiedOutput": "<p>one</p>\n\n\n<p>three</p>",
-    "goldmarkOutput": "<p>one</p>\n<p>three</p>\n",
-    "difference": "blank-line-layout"
+    "unifiedOutput": "<p>one</p>\n<p>three</p>"
   },
   {
     "input": "　# heading",
@@ -105,23 +99,19 @@
   },
   {
     "input": "one\n　\n---",
-    "unifiedOutput": "<h2>one</h2>",
-    "goldmarkOutput": "<p>one</p>\n<hr />\n",
-    "difference": "marker-only-setext"
+    "unifiedOutput": "<p>one</p>\n<hr />"
   },
   {
     "input": "one\n　\n===",
-    "unifiedOutput": "<h1>one</h1>",
-    "goldmarkOutput": "<p>one</p>\n<p>===</p>\n",
-    "difference": "marker-only-setext"
+    "unifiedOutput": "<p>one</p>\n<p>===</p>"
   },
   {
     "input": "　\n---",
-    "unifiedOutput": "\n<hr />"
+    "unifiedOutput": "<hr />"
   },
   {
     "input": "　\n===",
-    "unifiedOutput": "\n<p>===</p>"
+    "unifiedOutput": "<p>===</p>"
   },
   {
     "input": "# head\n　body",
@@ -217,9 +207,7 @@
   },
   {
     "input": "> one\n> 　\n> ---",
-    "unifiedOutput": "<blockquote>\n<h2>one</h2>\n</blockquote>",
-    "goldmarkOutput": "<blockquote>\n<p>one</p>\n<hr />\n</blockquote>\n",
-    "difference": "marker-only-setext"
+    "unifiedOutput": "<blockquote>\n<p>one</p>\n<hr />\n</blockquote>"
   },
   {
     "input": "- one\n  　two\n- three",
@@ -243,19 +231,17 @@
   },
   {
     "input": "- one\n  　\n  two",
-    "unifiedOutput": "<ul>\n<li>onetwo</li>\n</ul>",
-    "goldmarkOutput": "<ul>\n<li>one\ntwo</li>\n</ul>\n",
-    "difference": "tight-list-layout"
+    "unifiedOutput": "<ul>\n<li>\n<p>one</p>\n<p>two</p>\n</li>\n</ul>"
   },
   {
     "input": "- one\n  　\n- two",
-    "unifiedOutput": "<ul>\n<li>one</li>\n<li>two</li>\n</ul>"
+    "unifiedOutput": "<ul>\n<li>\n<p>one</p>\n</li>\n<li>\n<p>two</p>\n</li>\n</ul>"
   },
   {
     "input": "- 　\n- two",
-    "unifiedOutput": "<ul>\n<li>\n</li>\n<li>two</li>\n</ul>",
+    "unifiedOutput": "<ul>\n<li></li>\n<li>\n<p>two</p>\n</li>\n</ul>",
     "goldmarkOutput": "<ul>\n<li></li>\n<li>two</li>\n</ul>\n",
-    "difference": "tight-list-layout"
+    "difference": "initial-empty-list-item"
   },
   {
     "input": "1. 　one\n2. 　two",

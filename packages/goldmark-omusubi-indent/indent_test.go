@@ -147,7 +147,7 @@ func TestConcurrentParsing(t *testing.T) {
 }
 
 func FuzzParsing(f *testing.F) {
-	for _, s := range []string{"a\n　b", "　", "- a\n  　b", "> 　a", "　a\n---", "a\n　\n---", "```\n　a\n```", "a\r\n　b", "\xe3\x80", "　\x00"} {
+	for _, s := range []string{"a\n　b", "　", "- a\n  　b", "> 　a", "　a\n---", "a\n　\n---", "```\n　a\n```", "a\r\n　b", "\xe3\x80", "　\x00", "- one\n  　\n  two", "- one\n  　\n- two", "- 　\n- two"} {
 		f.Add(s)
 	}
 	extended := parser.New(parser.WithExtensions(indent.Parser))
@@ -211,6 +211,48 @@ func TestMarkerOnlySetextMatchesBlankLine(t *testing.T) {
 		t.Run(c.marked, func(t *testing.T) {
 			if got, want := render(t, extended, c.marked), render(t, native, c.plain); got != want {
 				t.Fatalf("got %q, want blank-line alias %q", got, want)
+			}
+		})
+	}
+}
+
+func TestListBlankMarkerMatchesNativeBlankLine(t *testing.T) {
+	extended := parser.New(parser.WithExtensions(indent.Parser))
+	native := parser.New()
+	for _, marked := range []string{
+		"- 　\n- two",
+		"- previous\n- 　\n- next",
+		"- one\n  　\n  two",
+		"- one\n  　\n- two",
+		"- 　\n  two",
+		"- one\n  　",
+		"- one\n  - inner\n    　\n- two",
+		"- one\n  > quote\n  > 　\n  > next\n- two",
+		"- one\n  　\n  　\n  two",
+		"1. one\n   　\n   two",
+		"- one\n  　\n  ---",
+		"- one\n  　\n  - inner",
+	} {
+		t.Run(marked, func(t *testing.T) {
+			plain := strings.ReplaceAll(marked, "　", "")
+			if got, want := render(t, extended, marked), render(t, native, plain); got != want {
+				t.Fatalf("got %q, want native blank-line alias %q", got, want)
+			}
+			var gotFlags, wantFlags []bool
+			for index, doc := range []ast.Node{extended.Parse([]byte(marked)), native.Parse([]byte(plain))} {
+				_ = ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+					if list, ok := n.(*ast.List); ok && entering {
+						if index == 0 {
+							gotFlags = append(gotFlags, list.IsTight)
+						} else {
+							wantFlags = append(wantFlags, list.IsTight)
+						}
+					}
+					return ast.WalkContinue, nil
+				})
+			}
+			if !reflect.DeepEqual(gotFlags, wantFlags) {
+				t.Fatalf("list flags %v != %v", gotFlags, wantFlags)
 			}
 		})
 	}
