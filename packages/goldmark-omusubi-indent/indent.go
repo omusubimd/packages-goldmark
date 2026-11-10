@@ -80,15 +80,75 @@ func (n *separator) Dump([]byte) *ast.NodeDump { return ast.NewNodeDump(n, nil) 
 
 type removeSeparators struct{}
 
-func (*removeSeparators) Transform(doc *ast.Document, _ text.Reader, _ parser.Context) {
+func (*removeSeparators) Transform(doc *ast.Document, reader text.Reader, pc parser.Context) {
 	var nodes []*separator
+	var lists []*ast.List
 	_ = ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
-		if node, ok := n.(*separator); ok && entering {
-			nodes = append(nodes, node)
+		if entering {
+			switch node := n.(type) {
+			case *separator:
+				nodes = append(nodes, node)
+			case *ast.List:
+				lists = append(lists, node)
+			}
 		}
 		return ast.WalkContinue, nil
 	})
+	if len(nodes) == 0 {
+		return
+	}
+	for _, node := range nodes {
+		// Propagate once per run, avoiding repeated scans of consecutive blanks.
+		if _, consecutive := node.PreviousSibling().(*separator); consecutive {
+			continue
+		}
+		// The raw marker was not an ASCII blank line during block parsing. Carry
+		// its blank-line state to the following block before removing it. A final
+		// blank in a nested list can also separate outer list items; a quote is a
+		// container boundary and must not loosen a surrounding list.
+		for cursor := ast.Node(node); cursor != nil; {
+			next := cursor.NextSibling()
+			for next != nil {
+				if _, ok := next.(*separator); !ok {
+					break
+				}
+				next = next.NextSibling()
+			}
+			if next != nil {
+				next.(ast.BlockNode).SetBlankPreviousLines(true)
+				break
+			}
+			switch parent := cursor.Parent().(type) {
+			case *ast.ListItem:
+				// A marker in an otherwise empty item is an initial blank, not
+				// a blank separating this item from the next one.
+				previous := cursor.PreviousSibling()
+				for previous != nil {
+					if _, ok := previous.(*separator); !ok {
+						break
+					}
+					previous = previous.PreviousSibling()
+				}
+				if previous == nil && cursor == node {
+					cursor = nil
+				} else {
+					cursor = parent
+				}
+			case *ast.List:
+				cursor = parent
+			default:
+				cursor = nil
+			}
+		}
+	}
 	for _, node := range nodes {
 		node.Parent().RemoveChild(node)
+	}
+	// Reuse Goldmark's own tight/loose rules after the temporary blocks are gone.
+	// Existing loose lists stay loose, and leading/trailing blanks alone do not
+	// loosen a list that has no blocks/items separated by that blank.
+	listParser := parser.NewListParser()
+	for _, list := range lists {
+		listParser.Close(list, reader, pc)
 	}
 }
